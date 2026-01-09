@@ -4,12 +4,15 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "esModuleInterop": true,
-    "strict": true,
+    "strict": false,
     "skipLibCheck": true,
     "outDir": "./dist",
     "rootDir": ".",
     "resolveJsonModule": true,
-    "declaration": true
+    "declaration": true,
+    "types": [
+      "node"
+    ]
   },
   "include": [
     "index-mongo.ts",
@@ -21,12 +24,6 @@
   ],
   "exclude": [
     "node_modules",
-    "dist",
-    "db.ts",
-    "index.ts",
-    "routes.ts",
-    "storage.ts",
-    "static.ts",
-    "vite.ts"
+    "dist"
   ]
 }

@@ -27,6 +27,8 @@
 
 ## 2. Desplegar Backend en Render (Gratis 24/7)
 
+> ⚠️ **Importante**: Asegúrate de que `server/package.json` incluya las dependencias de tipos (`@types/node`, `@types/express`, etc.) en `devDependencies`.
+
 1. Ve a [Render.com](https://render.com)
 2. Crea una cuenta o inicia sesión con GitHub
 3. Conecta tu repositorio de GitHub
