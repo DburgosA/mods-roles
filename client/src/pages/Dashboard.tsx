@@ -28,8 +28,8 @@ export default function Dashboard() {
     );
   }
 
-  const myRoleCount = roles?.filter((r: Role) => r.assignedUserId === user?.id).length || 0;
-  const availableCount = roles?.filter((r: Role) => !r.assignedUser).length || 0;
+  const myRoleCount = roles?.filter(r => r.assignedUserId === user?.id).length || 0;
+  const availableCount = roles?.filter(r => !r.assignedUser).length || 0;
   const totalCount = roles?.length || 0;
 
   return (
@@ -136,7 +136,7 @@ export default function Dashboard() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {roles?.map((role: Role) => (
+            {roles?.map((role) => (
               <RoleCard
                 key={role.id}
                 role={role}
