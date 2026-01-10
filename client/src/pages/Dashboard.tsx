@@ -3,13 +3,19 @@ import { useRoles } from "@/hooks/use-roles";
 import { RoleCard } from "@/components/RoleCard";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useLocation } from "wouter";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
   const { roles, claimRole, releaseRole, isClaiming, isReleasing, isLoading: rolesLoading } = useRoles();
   const [filter, setFilter] = useState<"all" | "available" | "mine">("all");
+  const [, setLocation] = useLocation();
 
-  if (!user) return null;
+  // Si no hay usuario, redirigir al login
+  if (!user) {
+    setLocation("/");
+    return null;
+  }
 
   const filteredRoles = roles?.filter((r: any) => {
     if (filter === "available") return !r.assignedUserId;

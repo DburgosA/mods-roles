@@ -27,14 +27,14 @@ export function useAuth() {
     onSuccess: (data) => {
       queryClient.setQueryData(['/api/auth/user'], data);
       toast({
-        title: "Welcome back!",
-        description: `Logged in as ${data.username}`,
+        title: "¡Bienvenido de nuevo!",
+        description: `Sesión iniciada como ${data.username}`,
       });
       setLocation("/dashboard");
     },
     onError: (error: Error) => {
       toast({
-        title: "Login failed",
+        title: "Error al iniciar sesión",
         description: error.message,
         variant: "destructive",
       });
