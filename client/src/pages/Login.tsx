@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 
 export default function Login() {
   const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const { login, isLoggingIn, user, isLoading } = useAuth();
   const [, setLocation] = useLocation();
 
@@ -19,7 +20,7 @@ export default function Login() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username.trim()) {
+    if (username.trim() && password.trim()) {
       login({ username: username.trim() });
     }
   };
@@ -75,10 +76,29 @@ export default function Login() {
                 </div>
               </div>
 
+              <div className="space-y-2 text-left">
+                <label htmlFor="password" className="text-sm font-medium text-foreground ml-1">
+                  Password
+                </label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={isLoggingIn}
+                    className="h-12 bg-background/50 border-white/10 focus:border-primary focus:ring-primary/20 pl-4 rounded-xl text-lg transition-all"
+                    required
+                    minLength={1}
+                  />
+                </div>
+              </div>
+
               <Button 
                 type="submit" 
                 className="w-full h-12 text-base rounded-xl bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-600/90 shadow-lg shadow-primary/25"
-                disabled={isLoggingIn || !username.trim()}
+                disabled={isLoggingIn || !username.trim() || !password.trim()}
               >
                 {isLoggingIn ? (
                   <>

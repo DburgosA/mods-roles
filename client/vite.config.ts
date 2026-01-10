@@ -7,15 +7,15 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "@shared": path.resolve(__dirname, "../shared"),
     },
   },
-  build: {
-    outDir: "dist",
-    emptyOutDir: true,
+  server: {
+    port: 5173,
+    proxy: {
+      "/api": {
+        target: process.env.VITE_API_URL || "http://localhost:3000",
+        changeOrigin: true,
+      },
+    },
   },
-  define: {
-    // La URL del backend se toma de la variable de entorno
-    'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || 'http://localhost:3000')
-  }
 });

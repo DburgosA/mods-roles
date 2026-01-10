@@ -1,97 +1,118 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api, buildUrl } from "@shared/routes";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api-client";
 import { useToast } from "@/hooks/use-toast";
+import type { InsertRole, SelectRole } from "@/types/shared";
 
 export function useRoles() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { data: roles, isLoading, error } = useQuery({
-    queryKey: [api.roles.list.path],
-    queryFn: async () => {
-      const res = await fetch(api.roles.list.path, { credentials: "include" });
-      if (!res.ok) throw new Error("Failed to fetch roles");
-      return api.roles.list.responses[200].parse(await res.json());
+  const rolesQuery = useQuery({
+    queryKey: ["/api/roles"],
+    queryFn: () => api.getRoles(),
+  });
+
+  const createRoleMutation = useMutation({
+    mutationFn: (data: InsertRole) => api.createRole(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/roles"] });
+      toast({
+        title: "Rol creado",
+        description: "El rol se ha creado exitosamente",
+      });
     },
-    refetchInterval: 5000, // Sync every 5 seconds as requested
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "No se pudo crear el rol",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateRoleMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Partial<InsertRole> }) =>
+      api.updateRole(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/roles"] });
+      toast({
+        title: "Rol actualizado",
+        description: "El rol se ha actualizado exitosamente",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "No se pudo actualizar el rol",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteRoleMutation = useMutation({
+    mutationFn: (id: number) => api.deleteRole(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/roles"] });
+      toast({
+        title: "Rol eliminado",
+        description: "El rol se ha eliminado exitosamente",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar el rol",
+        variant: "destructive",
+      });
+    },
   });
 
   const claimRoleMutation = useMutation({
-    mutationFn: async (id: number) => {
-      const url = buildUrl(api.roles.claim.path, { id });
-      const res = await fetch(url, {
-        method: api.roles.claim.method,
-        credentials: "include",
-      });
-      
-      if (!res.ok) {
-        if (res.status === 400 || res.status === 404) {
-          const error = await res.json();
-          throw new Error(error.message);
-        }
-        if (res.status === 401) throw new Error("Unauthorized");
-        throw new Error("Failed to claim role");
-      }
-      return api.roles.claim.responses[200].parse(await res.json());
-    },
+    mutationFn: (roleId: number) => api.claimRole(roleId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [api.roles.list.path] });
+      queryClient.invalidateQueries({ queryKey: ["/api/roles"] });
       toast({
-        title: "Role Claimed!",
-        description: "You have successfully taken this role.",
-        className: "bg-green-600 border-none text-white",
+        title: "Rol reclamado",
+        description: "Has tomado el rol exitosamente",
       });
     },
-    onError: (err: Error) => {
+    onError: () => {
       toast({
         title: "Error",
-        description: err.message,
+        description: "No se pudo reclamar el rol",
         variant: "destructive",
       });
     },
   });
 
   const releaseRoleMutation = useMutation({
-    mutationFn: async (id: number) => {
-      const url = buildUrl(api.roles.release.path, { id });
-      const res = await fetch(url, {
-        method: api.roles.release.method,
-        credentials: "include",
-      });
-      
-      if (!res.ok) {
-        if (res.status === 400 || res.status === 404) {
-          const error = await res.json();
-          throw new Error(error.message);
-        }
-        if (res.status === 401) throw new Error("Unauthorized");
-        throw new Error("Failed to release role");
-      }
-      return api.roles.release.responses[200].parse(await res.json());
-    },
+    mutationFn: (roleId: number) => api.releaseRole(roleId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [api.roles.list.path] });
+      queryClient.invalidateQueries({ queryKey: ["/api/roles"] });
       toast({
-        title: "Role Released",
-        description: "The role is now available for others.",
+        title: "Rol liberado",
+        description: "Has liberado el rol exitosamente",
       });
     },
-    onError: (err: Error) => {
+    onError: () => {
       toast({
         title: "Error",
-        description: err.message,
+        description: "No se pudo liberar el rol",
         variant: "destructive",
       });
     },
   });
 
   return {
-    roles,
-    isLoading,
-    error,
+    roles: rolesQuery.data,
+    isLoading: rolesQuery.isLoading,
+    error: rolesQuery.error,
+    createRole: createRoleMutation.mutateAsync,
+    updateRole: updateRoleMutation.mutateAsync,
+    deleteRole: deleteRoleMutation.mutateAsync,
     claimRole: claimRoleMutation.mutate,
-    isClaiming: claimRoleMutation.isPending,
     releaseRole: releaseRoleMutation.mutate,
+    isClaiming: claimRoleMutation.isPending,
     isReleasing: releaseRoleMutation.isPending,
   };
 }

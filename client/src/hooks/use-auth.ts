@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api, type LoginInput, type UserResponse } from "@shared/routes";
+import { api } from "@/lib/api-client";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 
@@ -9,39 +9,23 @@ export function useAuth() {
   const [, setLocation] = useLocation();
 
   const { data: user, isLoading, error } = useQuery({
-    queryKey: [api.auth.me.path],
+    queryKey: ['/api/auth/user'],
     queryFn: async () => {
-      const res = await fetch(api.auth.me.path, { credentials: "include" });
-      if (res.status === 401) return null;
-      if (!res.ok) throw new Error("Failed to fetch user");
-      return api.auth.me.responses[200].parse(await res.json());
+      try {
+        return await api.getUser();
+      } catch {
+        return null;
+      }
     },
     retry: false,
   });
 
   const loginMutation = useMutation({
-    mutationFn: async (data: LoginInput) => {
-      // Validate input before sending using the shared schema
-      const validated = api.auth.login.input.parse(data);
-      
-      const res = await fetch(api.auth.login.path, {
-        method: api.auth.login.method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(validated),
-        credentials: "include",
-      });
-
-      if (!res.ok) {
-        if (res.status === 400) {
-          const error = api.auth.login.responses[400].parse(await res.json());
-          throw new Error(error.message);
-        }
-        throw new Error("Login failed");
-      }
-      return api.auth.login.responses[200].parse(await res.json());
+    mutationFn: async (data: { username: string }) => {
+      return await api.login(data.username, '');
     },
     onSuccess: (data) => {
-      queryClient.setQueryData([api.auth.me.path], data);
+      queryClient.setQueryData(['/api/auth/user'], data);
       toast({
         title: "Welcome back!",
         description: `Logged in as ${data.username}`,
@@ -59,15 +43,10 @@ export function useAuth() {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch(api.auth.logout.path, {
-        method: api.auth.logout.method,
-        credentials: "include",
-      });
-      if (!res.ok) throw new Error("Logout failed");
-      return api.auth.logout.responses[200].parse(await res.json());
+      return await api.logout();
     },
     onSuccess: () => {
-      queryClient.setQueryData([api.auth.me.path], null);
+      queryClient.setQueryData(['/api/auth/user'], null);
       setLocation("/");
       toast({
         title: "Logged out",

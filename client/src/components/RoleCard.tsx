@@ -1,11 +1,12 @@
-import { User, Shield, Check, X, Lock } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { type RoleWithUser } from "@shared/schema";
-import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import type { SelectRole } from '@/types/shared';
+import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import { User, Shield, Check, X, Lock } from 'lucide-react';
 
 interface RoleCardProps {
-  role: RoleWithUser;
+  role: SelectRole;
   currentUserId?: number;
   onClaim: (id: number) => void;
   onRelease: (id: number) => void;
@@ -59,9 +60,9 @@ export function RoleCard({ role, currentUserId, onClaim, onRelease, isPending }:
       </div>
 
       {/* Content */}
-      <div className="flex-1 space-y-2 mb-6">
-        <h3 className="text-xl font-bold font-display tracking-tight group-hover:text-primary transition-colors">
-          {role.title}
+      <div className="flex-1 space-y-1">
+        <h3 className="text-lg font-semibold leading-none tracking-tight">
+          {role.name}
         </h3>
         <p className="text-sm text-muted-foreground leading-relaxed">
           {role.description}
