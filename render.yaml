@@ -3,10 +3,8 @@
 
 services:
   - type: web
-    name: mods-roles-api
+    name: mods-roles-backend
     runtime: node
-    region: oregon
-    plan: free
     buildCommand: cd server && npm install && npm run build
     startCommand: cd server && npm start
     envVars:
@@ -17,4 +15,4 @@ services:
       - key: SESSION_SECRET
         generateValue: true
       - key: FRONTEND_URL
-        sync: false
+        value: https://tu-frontend.vercel.app

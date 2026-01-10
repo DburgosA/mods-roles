@@ -1,13 +1,12 @@
 {
   "name": "mods-roles-server",
   "version": "1.0.0",
-  "type": "module",
-  "main": "dist/index.js",
+  "main": "dist/index-mongo.js",
   "scripts": {
-    "dev": "tsx watch server/index-mongo.ts",
-    "build": "tsc -p tsconfig.server.json",
+    "dev": "tsx watch index-mongo.ts",
+    "build": "tsc",
     "start": "node dist/index-mongo.js",
-    "seed": "tsx server/seed.ts"
+    "seed": "tsx seed.ts"
   },
   "dependencies": {
     "connect-mongo": "^5.1.0",
