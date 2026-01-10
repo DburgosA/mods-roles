@@ -4,49 +4,76 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* Twitch-inspired Dark Gaming Theme */
-  --font-display: 'Outfit', sans-serif;
-  --font-body: 'Inter', sans-serif;
+@layer base {
+  :root {
+    /* Twitch-inspired Dark Gaming Theme */
+    --font-display: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
 
-  /* Base Colors - Deep Dark Blue/Purple Backgrounds */
-  --background: 260 20% 10%;
-  --foreground: 210 40% 98%;
+    /* Base Colors - Deep Dark Blue/Purple Backgrounds */
+    --background: 260 20% 10%;
+    --foreground: 210 40% 98%;
 
-  /* Primary - Vibrant Twitch Purple */
-  --primary: 262 83% 65%;
-  --primary-foreground: 210 40% 98%;
+    /* Primary - Vibrant Twitch Purple */
+    --primary: 262 83% 65%;
+    --primary-foreground: 210 40% 98%;
 
-  /* Secondary - Softer Purple/Grey */
-  --secondary: 260 20% 18%;
-  --secondary-foreground: 210 40% 98%;
+    /* Secondary - Softer Purple/Grey */
+    --secondary: 260 20% 18%;
+    --secondary-foreground: 210 40% 98%;
 
-  /* Muted - For subdued text/borders */
-  --muted: 260 20% 25%;
-  --muted-foreground: 260 10% 70%;
+    /* Muted - For subdued text/borders */
+    --muted: 260 20% 25%;
+    --muted-foreground: 260 10% 70%;
 
-  /* Accent - Teal/Cyan for highlights */
-  --accent: 170 100% 50%;
-  --accent-foreground: 260 20% 10%;
+    /* Accent - Teal/Cyan for highlights */
+    --accent: 170 100% 50%;
+    --accent-foreground: 260 20% 10%;
 
-  /* Destructive - Neon Red */
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 100%;
+    /* Destructive - Neon Red */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-  /* Cards & Borders */
-  --card: 260 20% 13%;
-  --card-foreground: 210 40% 98%;
-  --border: 260 20% 25%;
-  --input: 260 20% 20%;
-  --ring: 262 83% 65%;
+    /* Cards & Borders */
+    --card: 260 20% 13%;
+    --card-foreground: 210 40% 98%;
+    --border: 260 20% 25%;
+    --input: 260 20% 20%;
+    --ring: 262 83% 65%;
 
-  --radius: 0.75rem;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 215 28% 17%;
+    --foreground: 210 40% 98%;
+    --card: 215 28% 17%;
+    --card-foreground: 210 40% 98%;
+    --popover: 215 28% 17%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 188 91% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 25% 27%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 215 25% 27%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 215 25% 27%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 215 25% 27%;
+    --input: 215 25% 27%;
+    --ring: 188 91% 48%;
+  }
 }
 
 @layer base {
+  * {
+    @apply border-border;
+  }
   body {
-    @apply bg-background text-foreground antialiased selection:bg-primary/30 selection:text-primary-foreground;
-    font-family: var(--font-body);
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 
   h1, h2, h3, h4, h5, h6 {

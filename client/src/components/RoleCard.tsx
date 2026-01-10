@@ -2,130 +2,129 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import type { SelectRole } from '@/types/shared';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
-import { User, Shield, Check, X, Lock } from 'lucide-react';
 
 interface RoleCardProps {
   role: SelectRole;
-  currentUserId?: number;
-  onClaim: (id: number) => void;
-  onRelease: (id: number) => void;
-  isPending: boolean;
+  currentUserId: number;
+  onClaim: (roleId: number) => void;
+  onRelease: (roleId: number) => void;
+  isClaiming: boolean;
+  isReleasing: boolean;
 }
 
-export function RoleCard({ role, currentUserId, onClaim, onRelease, isPending }: RoleCardProps) {
+export function RoleCard({ role, currentUserId, onClaim, onRelease, isClaiming, isReleasing }: RoleCardProps) {
   const isTaken = !!role.assignedUser;
   const isMine = role.assignedUserId === currentUserId;
-  
-  // Status config
-  const status = isMine 
-    ? { color: "border-green-500/50 bg-green-500/5", badge: "bg-green-500/20 text-green-300" }
-    : isTaken 
-      ? { color: "border-secondary bg-secondary/30 opacity-75", badge: "bg-secondary text-muted-foreground" }
-      : { color: "border-primary/30 bg-card hover:border-primary/60", badge: "bg-primary/20 text-primary-foreground" };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+    <div
       className={cn(
-        "relative flex flex-col p-6 rounded-2xl border backdrop-blur-sm transition-all duration-300",
-        "group hover:shadow-lg",
-        status.color
+        "bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border transition-all duration-200 hover:shadow-xl overflow-hidden",
+        isMine ? "border-cyan-300 ring-2 ring-cyan-200" : "border-cyan-100"
       )}
     >
-      {/* Header with Icon */}
-      <div className="flex justify-between items-start mb-4">
-        <div className="p-3 rounded-xl bg-background/50 border border-white/5 shadow-inner">
-          <Shield className={cn("w-8 h-8", isMine ? "text-green-400" : isTaken ? "text-muted-foreground" : "text-primary")} />
-        </div>
-        
-        {/* Status Badge */}
-        {isTaken && (
-          <div className={cn("px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5", status.badge)}>
-            {isMine ? (
-              <>
-                <Check className="w-3 h-3" />
-                YOURS
-              </>
-            ) : (
-              <>
-                <Lock className="w-3 h-3" />
-                TAKEN
-              </>
+      <div className="p-6">
+        {/* Header */}
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-gray-800 mb-1">
+              {role.name}
+            </h3>
+            {role.description && (
+              <p className="text-sm text-gray-500 line-clamp-2">
+                {role.description}
+              </p>
             )}
           </div>
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 space-y-1">
-        <h3 className="text-lg font-semibold leading-none tracking-tight">
-          {role.name}
-        </h3>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {role.description}
-        </p>
-      </div>
-
-      {/* Footer / User Info */}
-      <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between gap-4">
-        {isTaken ? (
-          <div className="flex items-center gap-2 overflow-hidden">
-            <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center shrink-0 border border-white/10">
-              <span className="font-bold text-xs">
+          <div
+            className={cn(
+              "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ml-3",
+              isMine
+                ? "bg-gradient-to-br from-cyan-400 to-blue-500"
+                : isTaken
+                ? "bg-gray-200"
+                : "bg-gradient-to-br from-cyan-100 to-blue-100"
+            )}
+          >
+            {isTaken ? (
+              <span className="text-sm font-semibold text-white">
                 {role.assignedUser?.username.slice(0, 2).toUpperCase()}
               </span>
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">
-                Assigned to
-              </span>
-              <span className="text-sm font-medium truncate text-foreground">
-                {role.assignedUser?.username}
-              </span>
-            </div>
+            ) : (
+              <svg
+                className="w-5 h-5 text-cyan-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
+              </svg>
+            )}
           </div>
-        ) : (
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <div className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center border border-white/5 border-dashed">
-              <User className="w-4 h-4 opacity-50" />
+        </div>
+
+        {/* Status */}
+        {isTaken && (
+          <div className="mb-4 flex items-center gap-2 text-sm">
+            <span className="text-gray-500">Asignado a:</span>
+            <span className={cn("font-medium", isMine ? "text-cyan-600" : "text-gray-700")}>
+              {role.assignedUser?.username}
+            </span>
+          </div>
+        )}
+
+        {/* Permissions */}
+        {role.permissions && role.permissions.length > 0 && (
+          <div className="mb-4">
+            <p className="text-xs text-gray-500 mb-2">Permisos:</p>
+            <div className="flex flex-wrap gap-1.5">
+              {role.permissions.slice(0, 3).map((permission, index) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-cyan-50 text-cyan-700 border border-cyan-100"
+                >
+                  {permission}
+                </span>
+              ))}
+              {role.permissions.length > 3 && (
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                  +{role.permissions.length - 3}
+                </span>
+              )}
             </div>
-            <span className="text-sm italic">Available</span>
           </div>
         )}
 
         {/* Action Button */}
-        <div className="shrink-0">
+        <div className="pt-4 border-t border-cyan-100">
           {isMine ? (
-            <Button 
-              variant="destructive" 
-              size="sm"
+            <Button
               onClick={() => onRelease(role.id)}
-              disabled={isPending}
-              className="h-9 px-4 shadow-red-900/20"
+              disabled={isReleasing}
+              className="w-full bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white"
             >
-              <X className="w-4 h-4 mr-1.5" />
-              Release
+              {isReleasing ? "Liberando..." : "Liberar Rol"}
             </Button>
-          ) : !isTaken ? (
-            <Button 
-              variant="gaming" 
-              size="sm"
-              onClick={() => onClaim(role.id)}
-              disabled={isPending}
-              className="h-9 px-4 shadow-indigo-500/20"
-            >
-              Take Role
+          ) : isTaken ? (
+            <Button disabled className="w-full bg-gray-100 text-gray-400 cursor-not-allowed">
+              No Disponible
             </Button>
           ) : (
-            <Button variant="secondary" size="sm" disabled className="opacity-50 cursor-not-allowed">
-              Locked
+            <Button
+              onClick={() => onClaim(role.id)}
+              disabled={isClaiming}
+              className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white"
+            >
+              {isClaiming ? "Asignando..." : "Tomar Rol"}
             </Button>
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
